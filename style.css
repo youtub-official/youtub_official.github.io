@@ -654,14 +654,12 @@ body {
 /* ===== RESPONSIVE BREAKPOINTS ===== */
 /* ============================================ */
 
-/* Laptops & Desktops */
 @media (max-width: 1200px) {
     .content-wrapper {
         grid-template-columns: 1fr 340px;
     }
 }
 
-/* Tablets */
 @media (max-width: 1024px) {
     .content-wrapper {
         grid-template-columns: 1fr;
@@ -681,13 +679,8 @@ body {
         width: 100%;
         height: 160px;
     }
-    
-    .sidebar-info h4 {
-        -webkit-line-clamp: 1;
-    }
 }
 
-/* Mobile Phones */
 @media (max-width: 768px) {
     .navbar {
         padding: 6px 12px;
@@ -789,25 +782,8 @@ body {
         font-size: 13px;
     }
     
-    .video-description {
-        padding: 10px 12px;
-    }
-    
-    .description-text {
-        font-size: 13px;
-    }
-    
     .play-icon {
         font-size: 48px;
-    }
-    
-    .comment-avatar {
-        width: 28px;
-        height: 28px;
-    }
-    
-    .sidebar-video {
-        padding: 4px 2px;
     }
     
     .sidebar-thumb {
@@ -815,7 +791,6 @@ body {
     }
 }
 
-/* Small Mobile Phones */
 @media (max-width: 480px) {
     .navbar {
         padding: 4px 8px;
@@ -964,7 +939,6 @@ body {
     }
 }
 
-/* iPhone SE / Very Small Screens */
 @media (max-width: 375px) {
     .nav-center {
         max-width: 120px;
