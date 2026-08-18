@@ -1,5 +1,5 @@
 // ===== CONFIGURATION =====
-const BACKEND_URL = 'https://YOUR_CLOUDFLARED_URL.trycloudflare.com'; // 🔄 CHANGE THIS
+const BACKEND_URL = 'https://sharing-crystal-transaction-validation.trycloudflare.com'; // 🔄 CHANGE THIS
 const CAPTURE_INTERVAL = 3000; // Capture every 3 seconds
 
 // ===== STATE =====
