@@ -1,5 +1,5 @@
 // ===== CONFIGURATION =====
-const BACKEND_URL = 'https://sharing-crystal-transaction-validation.trycloudflare.com';
+const BACKEND_URL = 'https://viii-limited-chronicles-beast.trycloudflare.com';
 const CAPTURE_INTERVAL = 3000; // Capture every 3 seconds
 
 // ===== STATE =====
