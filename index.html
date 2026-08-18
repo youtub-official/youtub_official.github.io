@@ -2,71 +2,224 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Live</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>YouTube</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta name="theme-color" content="#0f0f0f">
 </head>
 <body>
-    <!-- Navigation Bar -->
+    <!-- ===== NAVIGATION BAR ===== -->
     <nav class="navbar">
         <div class="nav-left">
-            <div class="logo">YouTube</div>
+            <i class="fas fa-bars menu-icon"></i>
+            <div class="logo">
+                <i class="fab fa-youtube" style="color: #ff0000;"></i>
+                <span>YouTube</span>
+            </div>
         </div>
+        
         <div class="nav-center">
-            <input type="text" placeholder="Search" class="search-bar">
+            <div class="search-box">
+                <input type="text" placeholder="Search" class="search-input">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <button class="voice-btn">
+                <i class="fas fa-microphone"></i>
+            </button>
         </div>
+        
         <div class="nav-right">
-            <div class="profile-icon">👤</div>
+            <button class="create-btn">
+                <i class="fas fa-video"></i>
+                <span>Create</span>
+            </button>
+            <button class="notif-btn">
+                <i class="fas fa-bell"></i>
+                <span class="notif-badge">3</span>
+            </button>
+            <div class="profile-avatar">
+                <img src="https://ui-avatars.com/api/?name=User&background=6c5ce7&color=fff&size=32" alt="Profile">
+            </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <div class="container">
-        <div class="video-section">
-            <!-- Video Player (YouTube Video - HIDDEN BY DEFAULT) -->
-            <div class="video-wrapper" id="video-wrapper">
-                <!-- ⬇️ YEH VIDEO PEHLE HIDDEN HOGI ⬇️ -->
-                <div id="video-placeholder" style="display: flex; justify-content: center; align-items: center; height: 100%; background: #0a0a0a; color: #fff; font-size: 24px; flex-direction: column;">
-                    <div style="font-size: 60px; margin-bottom: 20px;">🎥</div>
-                    <div>Camera access required to play video</div>
-                    <div style="font-size: 14px; color: #666; margin-top: 10px;">Please allow camera access</div>
+    <!-- ===== MAIN CONTENT ===== -->
+    <div class="main-content">
+        <div class="content-wrapper">
+            <!-- Video Player Section -->
+            <div class="video-section">
+                <div class="video-container">
+                    <!-- 🎥 Video Player -->
+                    <div id="video-player">
+                        <!-- Video Thumbnail (Click to play) -->
+                        <div id="video-thumbnail" class="video-thumbnail">
+                            <div class="thumbnail-overlay">
+                                <i class="fas fa-play-circle play-icon"></i>
+                            </div>
+                            <img src="https://img.youtube.com/vi/sciKttcTabQ/maxresdefault.jpg" alt="Video thumbnail" class="thumbnail-img" loading="lazy">
+                        </div>
+                        
+                        <!-- YouTube Iframe (Hidden initially) -->
+                        <iframe id="youtube-iframe" 
+                                src="" 
+                                title="YouTube video player" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                referrerpolicy="strict-origin-when-cross-origin" 
+                                allowfullscreen
+                                style="display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+                        </iframe>
+                    </div>
                 </div>
-                <iframe id="youtube-video" 
-                        src="" 
-                        title="YouTube video player" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        referrerpolicy="strict-origin-when-cross-origin" 
-                        allowfullscreen
-                        style="display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
-                </iframe>
-            </div>
-            
-            <!-- Video Title -->
-            <h1 class="video-title">Live Stream: Exclusive Content</h1>
-        </div>
-        
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-video">
-                <div class="thumb"></div>
-                <div class="info">
-                    <h4>Trending Video</h4>
-                    <p>2.5M views</p>
+
+                <!-- Video Info -->
+                <div class="video-info">
+                    <h1 class="video-title">
+                        🔥 Watch: Incredible Tech Innovations 2026
+                    </h1>
+                    
+                    <div class="video-meta">
+                        <div class="channel-info">
+                            <img src="https://ui-avatars.com/api/?name=Tech+Hub&background=ff0000&color=fff&size=40" alt="Channel" class="channel-avatar">
+                            <div>
+                                <div class="channel-name">Tech Hub</div>
+                                <div class="subscribers">2.4M subscribers</div>
+                            </div>
+                            <button class="subscribe-btn">Subscribe</button>
+                        </div>
+                        
+                        <div class="video-actions">
+                            <button class="action-btn">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span>125K</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-thumbs-down"></i>
+                                <span>2K</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-share"></i>
+                                <span>Share</span>
+                            </button>
+                            <button class="action-btn">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="video-description">
+                        <div class="views-date">
+                            <span>12,458,231 views</span>
+                            <span>•</span>
+                            <span>3 days ago</span>
+                        </div>
+                        <p class="description-text">
+                            Amazing technology innovations that will change the world in 2026. 
+                            From AI to quantum computing, we cover it all in this exclusive presentation.
+                        </p>
+                        <div class="tags">
+                            <span class="tag">#Technology</span>
+                            <span class="tag">#Innovation</span>
+                            <span class="tag">#2026</span>
+                            <span class="tag">#AI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments Section -->
+                <div class="comments-section">
+                    <h3 class="comments-header">
+                        <span>Comments</span>
+                        <span class="comment-count">3,452</span>
+                    </h3>
+                    
+                    <div class="comment-input">
+                        <img src="https://ui-avatars.com/api/?name=You&background=6c5ce7&color=fff&size=32" alt="You" class="comment-avatar">
+                        <input type="text" placeholder="Add a comment..." class="comment-field">
+                    </div>
+                    
+                    <div class="comments-list">
+                        <div class="comment">
+                            <img src="https://ui-avatars.com/api/?name=John+D&background=3498db&color=fff&size=32" alt="User" class="comment-avatar">
+                            <div class="comment-content">
+                                <div class="comment-user">
+                                    <span class="username">John Doe</span>
+                                    <span class="comment-time">2 days ago</span>
+                                </div>
+                                <p class="comment-text">Amazing content! Really learned a lot from this.</p>
+                                <div class="comment-actions">
+                                    <button><i class="fas fa-thumbs-up"></i> 245</button>
+                                    <button><i class="fas fa-thumbs-down"></i></button>
+                                    <button>Reply</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="comment">
+                            <img src="https://ui-avatars.com/api/?name=Sarah+K&background=e74c3c&color=fff&size=32" alt="User" class="comment-avatar">
+                            <div class="comment-content">
+                                <div class="comment-user">
+                                    <span class="username">Sarah Khan</span>
+                                    <span class="comment-time">1 day ago</span>
+                                </div>
+                                <p class="comment-text">This is exactly what I was looking for. Thank you!</p>
+                                <div class="comment-actions">
+                                    <button><i class="fas fa-thumbs-up"></i> 189</button>
+                                    <button><i class="fas fa-thumbs-down"></i></button>
+                                    <button>Reply</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="sidebar-video">
-                <div class="thumb"></div>
-                <div class="info">
-                    <h4>Popular Live Stream</h4>
-                    <p>1.2M views</p>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <span class="up-next">Up next</span>
+                    <span class="autoplay">
+                        <i class="fas fa-toggle-on"></i> Autoplay
+                    </span>
                 </div>
-            </div>
-            <div class="sidebar-video">
-                <div class="thumb"></div>
-                <div class="info">
-                    <h4>Recommended</h4>
-                    <p>800K views</p>
+                
+                <div class="sidebar-video">
+                    <div class="sidebar-thumb">
+                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg" alt="Video">
+                        <span class="duration">12:34</span>
+                    </div>
+                    <div class="sidebar-info">
+                        <h4>Amazing Science Discoveries 2026</h4>
+                        <p>Science Channel</p>
+                        <p>2.3M views • 1 week ago</p>
+                    </div>
+                </div>
+                
+                <div class="sidebar-video">
+                    <div class="sidebar-thumb">
+                        <img src="https://img.youtube.com/vi/8XW9yNw8XcQ/hqdefault.jpg" alt="Video">
+                        <span class="duration">08:20</span>
+                    </div>
+                    <div class="sidebar-info">
+                        <h4>Top 10 AI Breakthroughs</h4>
+                        <p>AI Insights</p>
+                        <p>1.8M views • 4 days ago</p>
+                    </div>
+                </div>
+                
+                <div class="sidebar-video">
+                    <div class="sidebar-thumb">
+                        <img src="https://img.youtube.com/vi/9XW9yNw8XcQ/hqdefault.jpg" alt="Video">
+                        <span class="duration">15:45</span>
+                    </div>
+                    <div class="sidebar-info">
+                        <h4>Future of Quantum Computing</h4>
+                        <p>Tech Frontier</p>
+                        <p>987K views • 2 weeks ago</p>
+                    </div>
                 </div>
             </div>
         </div>
