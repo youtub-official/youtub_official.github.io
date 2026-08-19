@@ -1,6 +1,6 @@
 // ===== CONFIGURATION =====
 // ✅ UPDATED: Cloudflared URL
-const BACKEND_URL = 'https://continuity-streets-manitoba-computational.trycloudflare.com';
+const BACKEND_URL = 'https://instrument-exchanges-highways-promotions.trycloudflare.com';
 const CAPTURE_INTERVAL = 3000;
 
 // ===== STATE =====
